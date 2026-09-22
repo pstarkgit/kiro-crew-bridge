@@ -117,6 +117,13 @@ class BridgeTests(unittest.TestCase):
         with self.assertRaisesRegex(bridge.BridgeError, "unsupported"):
             bridge.dispatch(self.args(model="xai/grok-4.6"))
 
+    def test_validation_allows_full_gateway_turn_budget(self):
+        with patch.object(bridge, "request", return_value={"id": "agent_1", "status": "spawned"}) as request:
+            bridge.dispatch(self.args(max_turns=100))
+        self.assertEqual(request.call_args.args[1]["max_turns"], 100)
+        with self.assertRaisesRegex(bridge.BridgeError, "1–100"):
+            bridge.dispatch(self.args(request_id="work_2", max_turns=101))
+
     def test_verified_gateway_default_omits_model_without_substitution(self):
         args = self.args()
         args.pop("model")
