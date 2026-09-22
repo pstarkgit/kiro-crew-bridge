@@ -8,6 +8,8 @@ This is a Codex plugin + MCP server. It talks only to `http://127.0.0.1:5476` on
 
 - Checks whether the local Kiro Crew gateway is ready
 - Dispatches an explicitly authorized, bounded task into Crew
+- Can target an explicit existing Kiro agent template without changing its
+  configured model, memory settings, or approval policy
 - Tracks idempotent receipts under `~/.local/state/codex-kiro-crew`
 - Keeps native Crew approvals in force (no secret leakage in argv/outputs)
 

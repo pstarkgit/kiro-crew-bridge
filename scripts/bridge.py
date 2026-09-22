@@ -156,11 +156,14 @@ def dispatch(a):
     task = a['task']
     use_default = a.get('use_gateway_default') is True
     model = a.get('model')
+    agent = a.get('agent', '')
     cwd = str(Path(a['cwd']).resolve(strict=True))
     if not Path(cwd).is_dir() or cwd == str(HOME) or cwd == '/':
         raise BridgeError('Use a bounded task directory, not home or filesystem root.')
     if not isinstance(task, str) or not 1 <= len(task) or len(TASK_PREFIX) + len(task) > MAX_TASK_CHARS:
         raise BridgeError('Task plus required safety prefix must contain at most 5000 characters.')
+    if agent and (not isinstance(agent, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{0,149}', agent)):
+        raise BridgeError('Agent ID is unsupported by the Kiro gateway.')
     # Mirrors Kiro's SPAWN_RUN_SCHEMA: provider-qualified IDs (for example
     # ``xai/grok-4.6``) are not accepted by the gateway spawn endpoint.
     if use_default:
@@ -181,6 +184,8 @@ def dispatch(a):
         raise BridgeError('User-authorized dispatch required.')
     body = {'task': TASK_PREFIX + task, 'cwd': cwd, 'max_turns': turns, 'keep': True,
         'include_memory': False, 'include_lessons': False, 'include_project': False}
+    if agent:
+        body['agent'] = agent
     # Omitting model intentionally inherits the verified existing Crew default.
     if not use_default:
         body['model'] = model
@@ -283,8 +288,7 @@ TOOLS = [
    'request_id':{'type':'string'}, 'offset':{'type':'integer','minimum':0,'default':0},
    'limit':{'type':'integer','minimum':1,'maximum':100,'default':100}}, ['request_id'])},
  {'name':'crew_dispatch', 'description':'Dispatch an explicitly authorized bounded task into Kiro Crew. May incur selected model usage. Preserves native approvals; no automatic retries. Scope is instruction-level, not a new sandbox or dollar cap.', 'inputSchema':schema({
-   'request_id':{'type':'string'}, 'task':{'type':'string'}, 'model':{'type':'string'},
-   'request_id':{'type':'string'}, 'task':{'type':'string'}, 'model':{'type':'string'},
+   'request_id':{'type':'string'}, 'task':{'type':'string'}, 'model':{'type':'string'}, 'agent':{'type':'string'},
    'use_gateway_default':{'type':'boolean','default':False}, 'expected_gateway_model':{'type':'string'},
    'cwd':{'type':'string'}, 'max_turns':{'type':'integer','minimum':1,'maximum':20,'default':8},
    'authorized':{'type':'boolean'}}, ['request_id','task','cwd','authorized'])}
