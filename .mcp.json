@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "kiro-crew": {
+      "command": "bash",
+      "args": [
+        "scripts/run-mcp.sh"
+      ]
+    }
+  }
+}

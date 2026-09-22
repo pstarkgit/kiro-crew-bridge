@@ -1,0 +1,29 @@
+{
+  "name": "kiro-crew-bridge",
+  "version": "0.1.0",
+  "description": "Local, user-authorized Kiro Crew dispatch with receipt tracking.",
+  "author": {
+    "name": "Patrick Stark",
+    "url": "https://github.com/pstarkgit"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Kiro Crew Bridge",
+    "shortDescription": "Dispatch bounded local Crew work with receipts.",
+    "longDescription": "Connects Codex to the local Kiro Crew gateway for explicitly authorized, bounded delegation. It keeps native Crew approvals in force, records idempotent receipts, and exposes only jobs created through this bridge.",
+    "developerName": "Patrick Stark",
+    "category": "Productivity",
+    "capabilities": [
+      "Local MCP tools",
+      "User-authorized delegation",
+      "Receipt tracking"
+    ],
+    "defaultPrompt": [
+      "Check whether my local Kiro Crew gateway is ready.",
+      "Delegate this bounded task to Kiro Crew after I authorize it.",
+      "Check the status of this Kiro Crew bridge receipt."
+    ],
+    "brandColor": "#4F46E5"
+  },
+  "mcpServers": "./.mcp.json"
+}
