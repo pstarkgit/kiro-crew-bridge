@@ -140,6 +140,19 @@ class BridgeTests(unittest.TestCase):
                 bridge.dispatch(args)
         request.assert_not_called()
 
+    def test_optional_explicit_agent_is_forwarded_without_changing_memory_flags(self):
+        with patch.object(bridge, "request", return_value={"id": "agent_1", "status": "spawned"}) as request:
+            bridge.dispatch(self.args(agent="kirocrew-worker"))
+        body = request.call_args.args[1]
+        self.assertEqual(body["agent"], "kirocrew-worker")
+        self.assertFalse(body["include_memory"])
+        self.assertFalse(body["include_lessons"])
+        self.assertFalse(body["include_project"])
+
+    def test_explicit_agent_must_use_gateway_identifier_syntax(self):
+        with self.assertRaisesRegex(bridge.BridgeError, "Agent ID"):
+            bridge.dispatch(self.args(agent="../not-an-agent"))
+
     def test_task_limit_includes_required_safety_prefix(self):
         room = bridge.MAX_TASK_CHARS - len(bridge.TASK_PREFIX)
         with self.assertRaisesRegex(bridge.BridgeError, "safety prefix"):
