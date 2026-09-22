@@ -153,6 +153,17 @@ class BridgeTests(unittest.TestCase):
         with self.assertRaisesRegex(bridge.BridgeError, "Agent ID"):
             bridge.dispatch(self.args(agent="../not-an-agent"))
 
+    def test_named_crew_is_forwarded_without_template_override(self):
+        with patch.object(bridge, "request", return_value={"id": "agent_1", "status": "spawned"}) as request:
+            bridge.dispatch(self.args(crew="mAIC"))
+        body = request.call_args.args[1]
+        self.assertEqual(body["crew"], "mAIC")
+        self.assertNotIn("agent", body)
+
+    def test_named_crew_and_template_are_mutually_exclusive(self):
+        with self.assertRaisesRegex(bridge.BridgeError, "not both"):
+            bridge.dispatch(self.args(agent="kirocrew-worker", crew="mAIC"))
+
     def test_task_limit_includes_required_safety_prefix(self):
         room = bridge.MAX_TASK_CHARS - len(bridge.TASK_PREFIX)
         with self.assertRaisesRegex(bridge.BridgeError, "safety prefix"):
