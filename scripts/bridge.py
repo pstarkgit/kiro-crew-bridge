@@ -183,8 +183,8 @@ def dispatch(a):
     elif not isinstance(model, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{0,149}', model):
         raise BridgeError('Model ID is unsupported by the Kiro gateway. Use its bare accepted ID; do not silently rewrite a provider-qualified model.')
     turns = a.get('max_turns', 8)
-    if type(turns) is not int or not 1 <= turns <= 20:
-        raise BridgeError('max_turns must be 1–20.')
+    if type(turns) is not int or not 1 <= turns <= 100:
+        raise BridgeError('max_turns must be 1–100.')
     if a.get('authorized') is not True:
         raise BridgeError('User-authorized dispatch required.')
     body = {'task': TASK_PREFIX + task, 'cwd': cwd, 'max_turns': turns, 'keep': True,
@@ -297,7 +297,7 @@ TOOLS = [
  {'name':'crew_dispatch', 'description':'Dispatch an explicitly authorized bounded task into Kiro Crew. May incur selected model usage. Preserves native approvals; no automatic retries. Scope is instruction-level, not a new sandbox or dollar cap.', 'inputSchema':schema({
    'request_id':{'type':'string'}, 'task':{'type':'string'}, 'model':{'type':'string'}, 'agent':{'type':'string'}, 'crew':{'type':'string'},
    'use_gateway_default':{'type':'boolean','default':False}, 'expected_gateway_model':{'type':'string'},
-   'cwd':{'type':'string'}, 'max_turns':{'type':'integer','minimum':1,'maximum':20,'default':8},
+   'cwd':{'type':'string'}, 'max_turns':{'type':'integer','minimum':1,'maximum':100,'default':8},
    'authorized':{'type':'boolean'}}, ['request_id','task','cwd','authorized'])}
 ]
 
